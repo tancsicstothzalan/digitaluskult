@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="hu" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digitális Kultúra - Tananyag & Gyakorlás</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Ikonok -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        word: { light: '#2b579a', DEFAULT: '#185abd', dark: '#103f84' },
+                        excel: { light: '#21a366', DEFAULT: '#107c41', dark: '#0b522b' },
+                        access: { light: '#b7472a', DEFAULT: '#a4373a', dark: '#702225' },
+                        python: { yellow: '#ffde57', blue: '#4584b6', darkblue: '#306998' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200 min-h-screen flex flex-col">
+
+    <!-- Fejléc & Navigáció -->
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- LOGO / CÍM -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-emerald-500 to-amber-500 flex items-center justify-center text-white text-xl font-black shadow-md">
+                        <i class="fa-solid fa-laptop-code"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-200 dark:to-white bg-clip-text text-transparent">
+                            Digitális Kultúra
+                        </h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">Interaktív Segédanyag & Gyakorló tér</p>
+                    </div>
+                </div>
+
+                <!-- DESKTOP NAVIGÁCIÓS FÜLEK -->
+                <nav class="hidden md:flex space-x-1 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200/80 dark:border-slate-700/50">
+                    <button onclick="switchTab('word')" id="nav-word" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200">
+                        <i class="fa-solid fa-file-word text-blue-600 dark:text-blue-400"></i>
+                        <span>Word</span>
+                    </button>
+                    <button onclick="switchTab('excel')" id="nav-excel" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200">
+                        <i class="fa-solid fa-file-excel text-emerald-600 dark:text-emerald-400"></i>
+                        <span>Excel</span>
+                    </button>
+                    <button onclick="switchTab('access')" id="nav-access" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200">
+                        <i class="fa-solid fa-database text-rose-600 dark:text-rose-400"></i>
+                        <span>Access</span>
+                    </button>
+                    <button onclick="switchTab('python')" id="nav-python" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200">
+                        <i class="fa-brands fa-python text-amber-500"></i>
+                        <span>Python</span>
+                    </button>
+                </nav>
+
+                <!-- FEJLÉC JOBB OLDAL: SÖTÉT MÓD VÁLTÓ -->
+                <div class="flex items-center space-x-2">
+                    <button id="theme-toggle" onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                        <i id="theme-toggle-dark-icon" class="fa-solid fa-moon hidden"></i>
+                        <i id="theme-toggle-light-icon" class="fa-solid fa-sun"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MOBIL NAVIGÁCIÓS FÜLEK -->
+        <div class="md:hidden border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-2 py-2">
+            <div class="grid grid-cols-4 gap-1 text-center">
+                <button onclick="switchTab('word')" id="mob-nav-word" class="mob-tab-btn py-2 rounded-lg text-xs font-bold flex flex-col items-center space-y-1">
+                    <i class="fa-solid fa-file-word text-base text-blue-600"></i>
+                    <span>Word</span>
+                </button>
+                <button onclick="switchTab('excel')" id="mob-nav-excel" class="mob-tab-btn py-2 rounded-lg text-xs font-bold flex flex-col items-center space-y-1">
+                    <i class="fa-solid fa-file-excel text-base text-emerald-600"></i>
+                    <span>Excel</span>
+                </button>
+                <button onclick="switchTab('access')" id="mob-nav-access" class="mob-tab-btn py-2 rounded-lg text-xs font-bold flex flex-col items-center space-y-1">
+                    <i class="fa-solid fa-database text-base text-rose-600"></i>
+                    <span>Access</span>
+                </button>
+                <button onclick="switchTab('python')" id="mob-nav-python" class="mob-tab-btn py-2 rounded-lg text-xs font-bold flex flex-col items-center space-y-1">
+                    <i class="fa-brands fa-python text-base text-amber-500"></i>
+                    <span>Python</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- FŐ TARTALMI ZÓNA -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ==================== 1. WORD FÜL ==================== -->
+        <section id="tab-word" class="tab-content space-y-8">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
+                    <i class="fa-solid fa-file-word"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-semibold tracking-wider uppercase backdrop-blur-sm">Szövegszerkesztés</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold mt-3 tracking-tight">Microsoft Word & Dokumentumszerkesztés</h2>
+                    <p class="mt-3 text-blue-100 text-sm sm:text-base leading-relaxed">
+                        A professzionális dokumentumkészítés alapja. Ismerd meg a bekezdés- és karakterformázásokat, stílusokat, tartalomjegyzék-készítést és a tipográfiai szabályokat!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Főbb Alapfogalmak Kártyák -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-paragraph"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Bekezdés & Karakter</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        Karakter: betűtípus, méret, szín, félkövér, dőlt, aláhúzott.<br>
+                        Bekezdés: igazítás (bal, közép, jobb, sorkizárt), sorköz, térköz a bekezdések előtt/után, behúzások.
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-heading"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Stílusok & Tartalomjegyzék</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        A Címsor 1, Címsor 2 stílusok használata biztosítja a strukturált felépítést. Ezzel egyetlen kattintással generálható az automatikus tartalomjegyzék.
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-file-export"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Oldalbeállítás & Szakaszok</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        Margók, tájoló (álló/fekvő), fej- és lábléc, oldalszámozás. A szakaszműveletekkel egy dokumentumon belül eltérő margókat és tájolást használhatunk.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Interaktív Gyakorló: Bekezdés & Karakter Stílus Szimulátor -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="p-2 bg-blue-50 dark:bg-blue-950 text-blue-600 rounded-lg">
+                        <i class="fa-solid fa-sliders text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold">Interaktív Word Formázó Szimulátor</h3>
+                        <p class="text-xs text-slate-500">Próbáld ki a tipikus formázásokat élőben az alábbi mintaszövegen!</p>
+                    </div>
+                </div>
+
+                <!-- Vezérlők -->
+                <div class="flex flex-wrap gap-2 p-3 bg-slate-100 dark:bg-slate-900 rounded-xl mb-4 border border-slate-200 dark:border-slate-800">
+                    <button onclick="toggleWordFormat('bold')" class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition text-sm">B</button>
+                    <button onclick="toggleWordFormat('italic')" class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded italic hover:bg-slate-50 dark:hover:bg-slate-700 transition text-sm">I</button>
+                    <button onclick="toggleWordFormat('underline')" class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded underline hover:bg-slate-50 dark:hover:bg-slate-700 transition text-sm">U</button>
+                    <div class="h-6 w-px bg-slate-300 dark:bg-slate-700 mx-1 align-middle self-center"></div>
+                    <button onclick="setWordAlign('left')" class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700 transition text-sm"><i class="fa-solid fa-align-left"></i></button>
+                    <button onclick="setWordAlign('center')" class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700 transition text-sm"><i class="fa-solid fa-align-center"></i></button>
+                    <button onclick="setWordAlign('right')" class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700 transition text-sm"><i class="fa-solid fa-align-right"></i></button>
+                    <button onclick="setWordAlign('justify')" class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700 transition text-sm"><i class="fa-solid fa-align-justify"></i></button>
+                    <div class="h-6 w-px bg-slate-300 dark:bg-slate-700 mx-1 align-middle self-center"></div>
+                    <select id="word-font-size" onchange="changeWordFontSize(this.value)" class="px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded text-sm">
+                        <option value="14px">14 px</option>
+                        <option value="18px" selected>18 px</option>
+                        <option value="24px">24 px</option>
+                    </select>
+                </div>
+
+                <!-- Mintaszöveg doboz -->
+                <div class="p-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl min-h-[120px]">
+                    <p id="word-preview-text" class="text-slate-800 dark:text-slate-200 transition-all leading-relaxed" style="font-size: 18px; text-align: left;">
+                        A Digitális Kultúra tantárgy keretében megtanuljuk a szövegszerkesztés alapvető és haladó lépéseit. A helyes tipográfia, a rendezett sorközök és a megfelelő címstílusok alkalmazása elengedhetetlen az esztétikus dokumentumok előállításához.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Billentyűkombinációk -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <h3 class="font-bold text-lg mb-4 flex items-center space-x-2">
+                    <i class="fa-solid fa-keyboard text-blue-600"></i>
+                    <span>Legfontosabb Word Billentyűkombinációk</span>
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <kbd class="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded text-xs font-mono font-bold">Ctrl + B</kbd>
+                        <span class="block mt-2 text-slate-600 dark:text-slate-400">Félkövér kijelölés</span>
+                    </div>
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <kbd class="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded text-xs font-mono font-bold">Ctrl + K</kbd>
+                        <span class="block mt-2 text-slate-600 dark:text-slate-400">Sorkizárt igazítás</span>
+                    </div>
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <kbd class="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded text-xs font-mono font-bold">Ctrl + Enter</kbd>
+                        <span class="block mt-2 text-slate-600 dark:text-slate-400">Kézi oldaltörés</span>
+                    </div>
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <kbd class="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded text-xs font-mono font-bold">Shift + Enter</kbd>
+                        <span class="block mt-2 text-slate-600 dark:text-slate-400">Sortörés (bekezdésen belül)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== 2. EXCEL FÜL ==================== -->
+        <section id="tab-excel" class="tab-content space-y-8">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-700 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
+                    <i class="fa-solid fa-file-excel"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-semibold tracking-wider uppercase backdrop-blur-sm">Táblázatkezelés</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold mt-3 tracking-tight">Microsoft Excel & Adatelemzés</h2>
+                    <p class="mt-3 text-emerald-100 text-sm sm:text-base leading-relaxed">
+                        Rendszerezd az adatokat, automatizáld a számításokat képletekkel és függvényekkel, majd jelenítsd meg az eredményeket szemléletes diagramokon!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Főbb Alapfogalmak Kártyák -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Címzés & Képletek</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        Minden képlet <code class="font-mono bg-slate-100 dark:bg-slate-900 px-1 rounded">=</code> jellel kezdődik.<br>
+                        <strong>Relatív címzés:</strong> A1, B5 (másoláskor változik).<br>
+                        <strong>Abszolút címzés:</strong> $A$1 (másoláskor rögzített).
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-square-root-variable"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Főbb Függvények</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        <code class="font-mono text-emerald-600 dark:text-emerald-400">SZUM()</code>, <code class="font-mono text-emerald-600 dark:text-emerald-400">ÁTLAG()</code>, <code class="font-mono text-emerald-600 dark:text-emerald-400">DARAB()</code>, <code class="font-mono text-emerald-600 dark:text-emerald-400">MAX()</code>, <code class="font-mono text-emerald-600 dark:text-emerald-400">MIN()</code>.<br>
+                        Feltételes függvények: <code class="font-mono">HA(feltétel; érték_ha_igaz; érték_ha_hamis)</code>.
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-chart-column"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Diagramok & Rendezés</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        Adatok szemléltetése oszlop-, vonal- vagy tortadiagramon. Adatsorok rendezése növekvő/csökkenő sorrendbe és automatikus szűrés (Autoszűrő).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Interaktív Gyakorló: Mini Excel Szimulátor -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="p-2 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 rounded-lg">
+                        <i class="fa-solid fa-table text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold">Interaktív Excel Függvény-Szimulátor</h3>
+                        <p class="text-xs text-slate-500">Módosítsd a cellák értékét vagy válassz függvényt az eredmény kiszámításához!</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Táblázat inputok -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm border-collapse border border-slate-300 dark:border-slate-700">
+                            <thead>
+                                <tr class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400">
+                                    <th class="border border-slate-300 dark:border-slate-700 p-2 w-12 text-center"></th>
+                                    <th class="border border-slate-300 dark:border-slate-700 p-2 text-center">A (Diák)</th>
+                                    <th class="border border-slate-300 dark:border-slate-700 p-2 text-center">B (Pontszám)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="border border-slate-300 dark:border-slate-700 p-2 font-mono font-bold text-center bg-slate-50 dark:bg-slate-900">1</td>
+                                    <td class="border border-slate-300 dark:border-slate-700 p-2 font-medium">Anna</td>
+                                    <td class="border border-slate-300 dark:border-slate-700 p-1">
+                                        <input type="number" id="cell-b1" value="85" oninput="calculateExcel()" class="w-full p-1 bg-transparent text-center border border-slate-200 dark:border-slate-700 rounded">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-slate-300 dark:border-slate-700 p-2 font-mono font-bold text-center bg-slate-50 dark:bg-slate-900">2</td>
+                                    <td class="border border-slate-300 dark:border-slate-700 p-2 font-medium">Péter</td>
+                                    <td class="border border-slate-300 dark:border-slate-700 p-1">
+                                        <input type="number" id="cell-b2" value="92" oninput="calculateExcel()" class="w-full p-1 bg-transparent text-center border border-slate-200 dark:border-slate-700 rounded">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-slate-300 dark:border-slate-700 p-2 font-mono font-bold text-center bg-slate-50 dark:bg-slate-900">3</td>
+                                    <td class="border border-slate-300 dark:border-slate-700 p-2 font-medium">Kati</td>
+                                    <td class="border border-slate-300 dark:border-slate-700 p-1">
+                                        <input type="number" id="cell-b3" value="78" oninput="calculateExcel()" class="w-full p-1 bg-transparent text-center border border-slate-200 dark:border-slate-700 rounded">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Képlet kiválasztó & eredmény -->
+                    <div class="flex flex-col justify-between space-y-4 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Válassz Függvényt:</label>
+                            <select id="excel-func" onchange="calculateExcel()" class="w-full p-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm">
+                                <option value="SZUM">=SZUM(B1:B3)</option>
+                                <option value="ATLAG">=ÁTLAG(B1:B3)</option>
+                                <option value="MAX">=MAX(B1:B3)</option>
+                                <option value="MIN">=MIN(B1:B3)</option>
+                            </select>
+                        </div>
+
+                        <div class="p-4 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 rounded-xl">
+                            <div class="text-xs text-emerald-700 dark:text-emerald-400 font-bold uppercase">Számított Eredmény:</div>
+                            <div id="excel-result" class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1 font-mono">255</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billentyűkombinációk -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <h3 class="font-bold text-lg mb-4 flex items-center space-x-2">
+                    <i class="fa-solid fa-keyboard text-emerald-600"></i>
+                    <span>Hasznos Excel Billentyűkombinációk</span>
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <kbd class="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded text-xs font-mono font-bold">F4</kbd>
+                        <span class="block mt-2 text-slate-600 dark:text-slate-400">Abszolút címzés ($) váltása</span>
+                    </div>
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <kbd class="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded text-xs font-mono font-bold">Alt + =</kbd>
+                        <span class="block mt-2 text-slate-600 dark:text-slate-400">Gyors Autószum képlet</span>
+                    </div>
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <kbd class="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded text-xs font-mono font-bold">Ctrl + Shift + L</kbd>
+                        <span class="block mt-2 text-slate-600 dark:text-slate-400">Autószűrő ki/bekapcsolása</span>
+                    </div>
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <kbd class="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded text-xs font-mono font-bold">F11</kbd>
+                        <span class="block mt-2 text-slate-600 dark:text-slate-400">Diagram létrehozása új lapon</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== 3. ACCESS FÜL ==================== -->
+        <section id="tab-access" class="tab-content space-y-8">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-rose-700 via-rose-600 to-red-700 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-semibold tracking-wider uppercase backdrop-blur-sm">Adatbázis-kezelés</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold mt-3 tracking-tight">Microsoft Access & Relációs Adatbázisok</h2>
+                    <p class="mt-3 text-rose-100 text-sm sm:text-base leading-relaxed">
+                        Tanuld meg a struktúrált adattárolást, az elemi adattípusokat, az elsődleges kulcsok jelentőségét és a SQL lekérdezések használatát!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Főbb Alapfogalmak Kártyák -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-table-cells"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Táblák & Mezők</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        Az adatbázis alapja a tábla. A sorszintű entitások a <strong>rekordok</strong>, az oszlopok a <strong>mezők</strong> (adattípusokkal: Rövid szöveg, Szám, Dátum, AutoSzám).
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Kulcsok & Kapcsolatok</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        <strong>Elsődleges kulcs (Primary Key):</strong> Egyedi azonosító a táblában.<br>
+                        <strong>Idegen kulcs (Foreign Key):</strong> Másik táblára mutató hivatkozás (1:N kapcsolat).
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-filter"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Lekérdezések (SQL)</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        Adatok kigyűjtése és szűrése feltételek alapján.<br>
+                        Alapvető szintaxis: <code class="font-mono text-xs text-rose-600 dark:text-rose-400">SELECT mezők FROM tábla WHERE feltétel ORDER BY rendezés</code>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Interaktív Gyakorló: SQL Szimulátor -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="p-2 bg-rose-50 dark:bg-rose-950 text-rose-600 rounded-lg">
+                        <i class="fa-solid fa-code text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold">Interaktív SQL Lekérdezés Szimulátor</h3>
+                        <p class="text-xs text-slate-500">Válassz egy szűrési feltételt és nézd meg a generált SQL kód eredményét!</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- SQL gombok -->
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="runSQL('all')" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-rose-600 hover:text-white rounded-lg text-sm font-medium transition">Összes diák</button>
+                        <button onclick="runSQL('grade10')" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-rose-600 hover:text-white rounded-lg text-sm font-medium transition">Csak 10. osztályosok</button>
+                        <button onclick="runSQL('highAtlag')" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-rose-600 hover:text-white rounded-lg text-sm font-medium transition">Átlag > 4.0</button>
+                    </div>
+
+                    <!-- Kód nézet -->
+                    <div class="bg-slate-900 text-rose-300 p-3 rounded-xl font-mono text-xs overflow-x-auto border border-slate-800">
+                        <span class="text-slate-500">// SQL Lekérdezés:</span><br>
+                        <span id="sql-query-display">SELECT * FROM Diakok;</span>
+                    </div>
+
+                    <!-- Eredmény tábla -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left border-collapse border border-slate-200 dark:border-slate-700">
+                            <thead class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300">
+                                <tr>
+                                    <th class="p-2 border border-slate-200 dark:border-slate-700">ID (PK)</th>
+                                    <th class="p-2 border border-slate-200 dark:border-slate-700">Név</th>
+                                    <th class="p-2 border border-slate-200 dark:border-slate-700">Osztály</th>
+                                    <th class="p-2 border border-slate-200 dark:border-slate-700">Átlag</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sql-table-body" class="divide-y divide-slate-200 dark:divide-slate-700">
+                                <!-- Dinamikusan frissül JS-ből -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Adatbázis Kulcsfogalmak -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <h3 class="font-bold text-lg mb-4 flex items-center space-x-2">
+                    <i class="fa-solid fa-database text-rose-600"></i>
+                    <span>Adatbázis Objektumok az Access-ben</span>
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                    <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div class="font-bold text-rose-600 dark:text-rose-400 mb-1"><i class="fa-solid fa-table mr-2"></i>Tábla</div>
+                        <p class="text-slate-600 dark:text-slate-400 text-xs">Az adatok tárolásának alapvető struktúrája.</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div class="font-bold text-rose-600 dark:text-rose-400 mb-1"><i class="fa-solid fa-magnifying-glass mr-2"></i>Lekérdezés</div>
+                        <p class="text-slate-600 dark:text-slate-400 text-xs">Adatok kigyűjtése, szűrése és számítása.</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div class="font-bold text-rose-600 dark:text-rose-400 mb-1"><i class="fa-solid fa-window-maximize mr-2"></i>Űrlap</div>
+                        <p class="text-slate-600 dark:text-slate-400 text-xs">Felhasználóbarát felület az adatbevitelhez.</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div class="font-bold text-rose-600 dark:text-rose-400 mb-1"><i class="fa-solid fa-print mr-2"></i>Jelentés</div>
+                        <p class="text-slate-600 dark:text-slate-400 text-xs">Nyomtatható, formázott adatösszegzés.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== 4. PYTHON FÜL ==================== -->
+        <section id="tab-python" class="tab-content space-y-8">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
+                    <i class="fa-brands fa-python"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-semibold tracking-wider uppercase backdrop-blur-sm">Programozás</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold mt-3 tracking-tight">Python Algoritmusok & Kódolás</h2>
+                    <p class="mt-3 text-amber-100 text-sm sm:text-base leading-relaxed">
+                        A modern programozás legnépszerűbb nyelve. Sajátítsd el a változók, feltételek, ciklusok és listák használatát!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Főbb Alapfogalmak Kártyák -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-code-commit"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Változók & Típusok</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        Adatok tárolása névvel ellátott rekeszekben.<br>
+                        Típusok: <code class="font-mono text-amber-600 dark:text-amber-400">int</code> (egész), <code class="font-mono text-amber-600 dark:text-amber-400">float</code> (valós), <code class="font-mono text-amber-600 dark:text-amber-400">str</code> (szöveg), <code class="font-mono text-amber-600 dark:text-amber-400">bool</code> (logikai).
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-code-branch"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Feltételek (Elágazások)</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        A program döntéshozatala <code class="font-mono text-amber-600 dark:text-amber-400">if</code>, <code class="font-mono text-amber-600 dark:text-amber-400">elif</code> és <code class="font-mono text-amber-600 dark:text-amber-400">else</code> kulcsszavak segítségével. A blokkokat behúzás (4 szóköz) jelzi!
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Ciklusok & Listák</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                        Ismétlődő utasítások: <code class="font-mono text-amber-600 dark:text-amber-400">for</code> (számlálós) és <code class="font-mono text-amber-600 dark:text-amber-400">while</code> (feltételes) ciklus. Listák: <code class="font-mono">[1, 2, 3]</code> elemsorozatok tárolására.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Interaktív Gyakorló: Python Kódminták & Kvíz -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Interaktív Kód Kártya Másolással -->
+                <div class="bg-slate-900 rounded-2xl p-6 text-slate-100 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-mono font-bold text-amber-400 flex items-center gap-2">
+                                <i class="fa-brands fa-python"></i> példa_program.py
+                            </span>
+                            <button onclick="copyCode()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                                <i class="fa-regular fa-copy"></i> <span id="copy-btn-text">Kód Másolása</span>
+                            </button>
+                        </div>
+                        <pre class="font-mono text-xs sm:text-sm text-slate-300 leading-relaxed overflow-x-auto p-4 bg-slate-950 rounded-xl border border-slate-800"><code id="python-code-sample"><span class="text-slate-500"># Számok átlagának kiszámítása Pythonban</span>
+szamok = [12, 45, 67, 89, 23]
+
+<span class="text-amber-400">def</span> <span class="text-blue-400">szamol_atlag</span>(lista):
+    osszeg = <span class="text-purple-400">sum</span>(lista)
+    db = <span class="text-purple-400">len</span>(lista)
+    <span class="text-amber-400">return</span> osszeg / db
+
+atlag = szamol_atlag(szamok)
+<span class="text-purple-400">print</span>(f<span class="text-emerald-400">"A számok átlaga: {atlag:.2f}"</span>)
+
+<span class="text-amber-400">if</span> atlag >= <span class="text-cyan-400">50</span>:
+    <span class="text-purple-400">print</span>(<span class="text-emerald-400">"Sikeres teljesítmény!"</span>)
+<span class="text-amber-400">else</span>:
+    <span class="text-purple-400">print</span>(<span class="text-emerald-400">"Szükséges még gyakorlás."</span>)</code></pre>
+                    </div>
+                    <div class="mt-4 p-3 bg-slate-850 rounded-xl text-xs text-slate-400 border border-slate-800">
+                        <i class="fa-solid fa-lightbulb text-amber-400 mr-1"></i> <strong>Tipp:</strong> A Pythonban a behúzás (indentation) határozza meg a kódtömböket a kapcsos zárójelek helyett.
+                    </div>
+                </div>
+
+                <!-- Interaktív Mini Python Kvíz -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="p-2 bg-amber-50 dark:bg-amber-950 text-amber-500 rounded-lg">
+                                <i class="fa-solid fa-circle-question text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold">Python Villámteszt</h3>
+                                <p class="text-xs text-slate-500">Teszteld a tudásod egy gyors kérdéssel!</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <p class="font-medium text-sm">Melyik függvényt használjuk adatok képernyőre írására Pythonban?</p>
+                            <div class="space-y-2">
+                                <button onclick="checkQuiz(this, false)" class="quiz-opt w-full p-3 text-left border border-slate-200 dark:border-slate-700 rounded-xl text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center justify-between">
+                                    <span><code>console.log()</code></span>
+                                    <i class="fa-regular fa-circle text-slate-400"></i>
+                                </button>
+                                <button onclick="checkQuiz(this, true)" class="quiz-opt w-full p-3 text-left border border-slate-200 dark:border-slate-700 rounded-xl text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center justify-between">
+                                    <span><code>print()</code></span>
+                                    <i class="fa-regular fa-circle text-slate-400"></i>
+                                </button>
+                                <button onclick="checkQuiz(this, false)" class="quiz-opt w-full p-3 text-left border border-slate-200 dark:border-slate-700 rounded-xl text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center justify-between">
+                                    <span><code>System.out.println()</code></span>
+                                    <i class="fa-regular fa-circle text-slate-400"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="quiz-feedback" class="mt-4 p-3 rounded-xl text-xs font-semibold hidden"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Lábléc -->
+    <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 dark:text-slate-400 space-y-2">
+            <p> Digitális Kultúra Oktató & Gyakorló Segédanyag</p>
+            <p class="text-slate-400 dark:text-slate-600">Készült a modern középiskolai digitális kultúra tananyag alapján (Word, Excel, Access, Python).</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIKA -->
+    <script>
+        // --- 1. Sötét / Világos Mód Kezelése ---
+        function initTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
+                document.getElementById('theme-toggle-light-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-toggle-dark-icon').classList.add('hidden');
+                document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
+            }
+        }
+
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+                document.getElementById('theme-toggle-dark-icon').classList.add('hidden');
+                document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+                document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
+                document.getElementById('theme-toggle-light-icon').classList.add('hidden');
+            }
+        }
+
+        // --- 2. Dinamikus Fülváltás ---
+        const tabs = ['word', 'excel', 'access', 'python'];
+        
+        function switchTab(tabId) {
+            tabs.forEach(id => {
+                const content = document.getElementById(`tab-${id}`);
+                const navBtn = document.getElementById(`nav-${id}`);
+                const mobNavBtn = document.getElementById(`mob-nav-${id}`);
+
+                if (id === tabId) {
+                    content.classList.add('active');
+                    
+                    // Aktív gomb stílusok témaszín alapján
+                    if(id === 'word') {
+                        navBtn.className = "tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all bg-blue-600 text-white shadow-md";
+                        mobNavBtn.className = "mob-tab-btn py-2 rounded-lg text-xs font-bold flex flex-col items-center space-y-1 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300";
+                    } else if(id === 'excel') {
+                        navBtn.className = "tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all bg-emerald-600 text-white shadow-md";
+                        mobNavBtn.className = "mob-tab-btn py-2 rounded-lg text-xs font-bold flex flex-col items-center space-y-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300";
+                    } else if(id === 'access') {
+                        navBtn.className = "tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all bg-rose-600 text-white shadow-md";
+                        mobNavBtn.className = "mob-tab-btn py-2 rounded-lg text-xs font-bold flex flex-col items-center space-y-1 bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300";
+                    } else if(id === 'python') {
+                        navBtn.className = "tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all bg-amber-500 text-slate-900 shadow-md";
+                        mobNavBtn.className = "mob-tab-btn py-2 rounded-lg text-xs font-bold flex flex-col items-center space-y-1 bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300";
+                    }
+                } else {
+                    content.classList.remove('active');
+                    navBtn.className = "tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+                    mobNavBtn.className = "mob-tab-btn py-2 rounded-lg text-xs font-bold flex flex-col items-center space-y-1 text-slate-500 dark:text-slate-400";
+                }
+            });
+        }
+
+        // --- 3. Word Szimulátor Funkciók ---
+        function toggleWordFormat(type) {
+            const preview = document.getElementById('word-preview-text');
+            if (type === 'bold') preview.classList.toggle('font-bold');
+            if (type === 'italic') preview.classList.toggle('italic');
+            if (type === 'underline') preview.classList.toggle('underline');
+        }
+
+        function setWordAlign(align) {
+            const preview = document.getElementById('word-preview-text');
+            preview.style.textAlign = align;
+        }
+
+        function changeWordFontSize(size) {
+            document.getElementById('word-preview-text').style.fontSize = size;
+        }
+
+        // --- 4. Excel Szimulátor Funkciók ---
+        function calculateExcel() {
+            const v1 = parseFloat(document.getElementById('cell-b1').value) || 0;
+            const v2 = parseFloat(document.getElementById('cell-b2').value) || 0;
+            const v3 = parseFloat(document.getElementById('cell-b3').value) || 0;
+            const func = document.getElementById('excel-func').value;
+            const resElem = document.getElementById('excel-result');
+
+            let result = 0;
+            if (func === 'SZUM') result = v1 + v2 + v3;
+            else if (func === 'ATLAG') result = ((v1 + v2 + v3) / 3).toFixed(2);
+            else if (func === 'MAX') result = Math.max(v1, v2, v3);
+            else if (func === 'MIN') result = Math.min(v1, v2, v3);
+
+            resElem.textContent = result;
+        }
+
+        // --- 5. Access / SQL Szimulátor Funkciók ---
+        const studentData = [
+            { id: 1, name: "Kovács Péter", grade: "10.A", avg: 4.5 },
+            { id: 2, name: "Nagy Anna", grade: "11.B", avg: 3.8 },
+            { id: 3, name: "Szabó Gábor", grade: "10.A", avg: 4.2 },
+            { id: 4, name: "Tóth Eszter", grade: "12.C", avg: 4.9 }
+        ];
+
+        function runSQL(type) {
+            const queryElem = document.getElementById('sql-query-display');
+            const tbody = document.getElementById('sql-table-body');
+            tbody.innerHTML = '';
+
+            let filtered = [];
+            if (type === 'all') {
+                queryElem.textContent = 'SELECT * FROM Diakok;';
+                filtered = studentData;
+            } else if (type === 'grade10') {
+                queryElem.textContent = "SELECT * FROM Diakok WHERE Osztaly = '10.A';";
+                filtered = studentData.filter(s => s.grade === '10.A');
+            } else if (type === 'highAtlag') {
+                queryElem.textContent = 'SELECT * FROM Diakok WHERE Atlag > 4.0 ORDER BY Atlag DESC;';
+                filtered = studentData.filter(s => s.avg > 4.0).sort((a,b) => b.avg - a.avg);
+            }
+
+            filtered.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition';
+                tr.innerHTML = `
+                    <td class="p-2 border border-slate-200 dark:border-slate-700 font-mono text-xs">${row.id}</td>
+                    <td class="p-2 border border-slate-200 dark:border-slate-700 font-medium">${row.name}</td>
+                    <td class="p-2 border border-slate-200 dark:border-slate-700">${row.grade}</td>
+                    <td class="p-2 border border-slate-200 dark:border-slate-700 font-mono text-xs font-bold text-rose-600 dark:text-rose-400">${row.avg}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- 6. Python Másolás & Kvíz ---
+        function copyCode() {
+            const codeText = "szamok = [12, 45, 67, 89, 23]\n\ndef szamol_atlag(lista):\n    osszeg = sum(lista)\n    db = len(lista)\n    return osszeg / db\n\natlag = szamol_atlag(szamok)\nprint(f\"A számok átlaga: {atlag:.2f}\")\n\nif atlag >= 50:\n    print(\"Sikeres teljesítmény!\")\nelse:\n    print(\"Szükséges még gyakorlás.\")";
+            
+            // Másolás vágólapra
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = codeText;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+
+            const btnText = document.getElementById('copy-btn-text');
+            btnText.textContent = 'Másolva!';
+            setTimeout(() => { btnText.textContent = 'Kód Másolása'; }, 2000);
+        }
+
+        function checkQuiz(btn, isCorrect) {
+            const options = document.querySelectorAll('.quiz-opt');
+            const feedback = document.getElementById('quiz-feedback');
+
+            options.forEach(opt => {
+                opt.classList.remove('border-emerald-500', 'border-rose-500', 'bg-emerald-50', 'bg-rose-50');
+            });
+
+            feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+
+            if (isCorrect) {
+                btn.classList.add('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-950/40');
+                feedback.classList.add('bg-emerald-100', 'dark:bg-emerald-950', 'text-emerald-800', 'dark:text-emerald-300');
+                feedback.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Helyes válasz! A <code>print()</code> függvény ír ki adatokat a konzolra.';
+            } else {
+                btn.classList.add('border-rose-500', 'bg-rose-50', 'dark:bg-rose-950/40');
+                feedback.classList.add('bg-rose-100', 'dark:bg-rose-950', 'text-rose-800', 'dark:text-rose-300');
+                feedback.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Helytelen! Próbáld újra! (Segítség: Pythonban a kimeneti függvény a <code>print()</code>).';
+            }
+        }
+
+        // --- Kezdeti Inicializálás ---
+        window.onload = function() {
+            initTheme();
+            switchTab('word');
+            runSQL('all');
+            calculateExcel();
+        };
+    </script>
+</body>
+</html>
